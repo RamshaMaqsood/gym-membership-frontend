@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import Navbar from "../../components/manager/Navbar";
 
-const API_URL = "http://localhost:3000"; // adjust if needed
+const API_URL =  import.meta.env.VITE_BACKEND_URL || "http://localhost:3000";
 
 export default function Member() {
   const [members, setMembers] = useState([]);

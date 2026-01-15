@@ -1,29 +1,74 @@
-import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+} from "react-router-dom";
 import Login from "./pages/auth/Login";
 import Dashboard from "./pages/admin/Dashboard";
-import { useAuth } from "./context/AuthContext";
 import Member from "./pages/admin/Member";
 import Trainer from "./pages/admin/Trainer";
 import Schedule from "./pages/admin/Schedule";
 import TrainerDashboard from "./pages/trainer/Dashboard";
 import MemberDashboard from "./pages/member/Dashboard";
+import { useAuth } from "./context/AuthContext";
 
 const ProtectedRoute = ({ children, role }) => {
   const { user, loading } = useAuth();
 
   if (loading) return <p>Loading...</p>;
-  if (!user || user.role !== role) return <Navigate to="/login" replace />;
+  if (!user) return <Navigate to="/login" replace />;
+  if (role && user.role !== role) return <Navigate to="/login" replace />;
 
   return children;
 };
 
 function App() {
-  return ( 
-    <Routes>
-      {/* Login Route */}
-      <Route path="/login" element={<Login />} />
+  const { user, loading } = useAuth();
 
-      {/* Admin/Manager Routes  */}
+  // Helper to redirect user based on role
+  const getDashboardPath = (role) => {
+    switch (role) {
+      case "manager":
+        return "/admin/dashboard";
+      case "trainer":
+        return "/trainer/dashboard";
+      case "member":
+        return "/member/dashboard";
+      default:
+        return "/login";
+    }
+  };
+
+  if (loading) return <p>Loading...</p>;
+
+  return (
+    <Routes>
+      {/* Root Route */}
+      <Route
+        path="/"
+        element={
+          user ? (
+            <Navigate to={getDashboardPath(user.role)} replace />
+          ) : (
+            <Navigate to="/login" replace />
+          )
+        }
+      />
+
+      {/* Login Route */}
+      <Route
+        path="/login"
+        element={
+          user ? (
+            <Navigate to={getDashboardPath(user.role)} replace />
+          ) : (
+            <Login />
+          )
+        }
+      />
+
+      {/* Manager Routes */}
       <Route
         path="/admin/dashboard"
         element={
@@ -32,58 +77,53 @@ function App() {
           </ProtectedRoute>
         }
       />
-
       <Route
         path="/admin/members"
         element={
           <ProtectedRoute role="manager">
-            <Member/>
+            <Member />
           </ProtectedRoute>
         }
       />
-
       <Route
         path="/admin/trainers"
         element={
           <ProtectedRoute role="manager">
-            <Trainer/>
+            <Trainer />
           </ProtectedRoute>
         }
       />
-
       <Route
         path="/admin/schedules"
         element={
           <ProtectedRoute role="manager">
-            <Schedule/>
+            <Schedule />
           </ProtectedRoute>
         }
       />
 
-      {/* Trainer Routes  */}
+      {/* Trainer Route */}
       <Route
         path="/trainer/dashboard"
         element={
           <ProtectedRoute role="trainer">
-            <TrainerDashboard/>
+            <TrainerDashboard />
           </ProtectedRoute>
         }
       />
 
-      {/* Trainer Routes  */}
+      {/* Member Route */}
       <Route
         path="/member/dashboard"
         element={
           <ProtectedRoute role="member">
-            <MemberDashboard/>
+            <MemberDashboard />
           </ProtectedRoute>
         }
       />
 
-
-
-      {/* Fallback */}
-      {/* <Route path="*" element={<Navigate to="/login" replace />} /> */}
+      {/* Catch-all Fallback */}
+      <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );
 }
