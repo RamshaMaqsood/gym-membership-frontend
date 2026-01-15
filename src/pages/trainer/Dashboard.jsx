@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../../api/axios";
+import { useAuth } from "../../context/AuthContext";
 
 const TrainerDashboard = () => {
   const navigate = useNavigate();
@@ -48,10 +49,13 @@ const TrainerDashboard = () => {
     fetchSchedules();
   }, []);
 
+    const { logout } = useAuth();
+  
+
   /* ================= LOGOUT ================= */
   const handleLogout = () => {
-    localStorage.removeItem("token"); // remove auth token
-    navigate("/login"); // redirect to login page
+    logout();
+    navigate("/login");
   };
 
   /* ================= UI ================= */

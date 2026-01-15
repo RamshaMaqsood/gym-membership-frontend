@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../../api/axios"; // axios instance pointing to your backend
+import { useAuth } from "../../context/AuthContext";
 
 const MemberDashboard = () => {
   const navigate = useNavigate();
@@ -15,10 +16,11 @@ const MemberDashboard = () => {
   const [loadingProfile, setLoadingProfile] = useState(true);
   const [loadingTrainer, setLoadingTrainer] = useState(true);
   const [loadingSchedules, setLoadingSchedules] = useState(true);
+  const { logout } = useAuth();
 
   /* ---------------- LOGOUT ---------------- */
   const handleLogout = () => {
-    localStorage.removeItem("token");
+    logout();
     navigate("/login");
   };
 
