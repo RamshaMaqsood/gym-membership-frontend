@@ -1,11 +1,10 @@
 import { useEffect, useState } from "react";
 import api from "../../api/axios";
 import { useAuth } from "../../context/AuthContext";
-import { useNavigate } from "react-router-dom";
+import Navbar from "../../components/manager/Navbar";
 
 const Dashboard = () => {
-  const { user, logout } = useAuth();
-  const navigate = useNavigate();
+  const { user } = useAuth();
 
   const [stats, setStats] = useState({
     members: 0,
@@ -16,12 +15,8 @@ const Dashboard = () => {
   useEffect(() => {
     const fetchStats = async () => {
       try {
-        const token = localStorage.getItem("token");
-
-         // Total members
-        const dashboardStatsRes = await api.get("/report/dashboard", {
-          headers: { Authorization: `Bearer ${token}` },
-        });
+        // Total members
+        const dashboardStatsRes = await api.get("/reports/dashboard");
 
         setStats({
           members: dashboardStatsRes.data.totalMembers,
@@ -37,49 +32,9 @@ const Dashboard = () => {
     fetchStats();
   }, []);
 
-  const handleLogout = () => {
-    logout();
-    navigate("/login");
-  };
-
   return (
     <div className="min-h-screen flex bg-gray-100">
-      {/* Sidebar */}
-      <aside className="w-64 bg-white shadow-md p-6">
-        <h2 className="text-xl font-bold mb-6">Manager Panel</h2>
-        <nav className="flex flex-col gap-4">
-          <button
-            className="text-left text-gray-700 hover:text-blue-600"
-            onClick={() => navigate("/admin/dashboard")}
-          >
-            Dashboard
-          </button>
-          <button
-            className="text-left text-gray-700 hover:text-blue-600"
-            onClick={() => navigate("/admin/members")}
-          >
-            Members
-          </button>
-          <button
-            className="text-left text-gray-700 hover:text-blue-600"
-            onClick={() => navigate("/admin/trainers")}
-          >
-            Trainers
-          </button>
-          <button
-            className="text-left text-gray-700 hover:text-blue-600"
-            onClick={() => navigate("/admin/schedules")}
-          >
-            Schedules
-          </button>
-          <button
-            className="text-left text-red-600 hover:text-red-700 mt-10"
-            onClick={handleLogout}
-          >
-            Logout
-          </button>
-        </nav>
-      </aside>
+      <Navbar />
 
       {/* Main Content */}
       <main className="flex-1 p-8">

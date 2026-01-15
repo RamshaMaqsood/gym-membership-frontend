@@ -17,9 +17,9 @@ const Login = () => {
     setLoading(true);
 
     let endpoint = "";
-    if (role === "manager") endpoint = "/manager/login";
-    if (role === "trainer") endpoint = "/trainer/login";
-    if (role === "member") endpoint = "/member/login";
+    if (role === "manager") endpoint = "/managers/login";
+    if (role === "trainer") endpoint = "/trainers/login";
+    if (role === "member") endpoint = "/members/login";
 
     try {
       const res = await api.post(endpoint, { email, password });

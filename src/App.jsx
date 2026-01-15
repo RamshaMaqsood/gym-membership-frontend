@@ -2,6 +2,11 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-d
 import Login from "./pages/auth/Login";
 import Dashboard from "./pages/admin/Dashboard";
 import { useAuth } from "./context/AuthContext";
+import Member from "./pages/admin/Member";
+import Trainer from "./pages/admin/Trainer";
+import Schedule from "./pages/admin/Schedule";
+import TrainerDashboard from "./pages/trainer/Dashboard";
+import MemberDashboard from "./pages/member/Dashboard";
 
 const ProtectedRoute = ({ children, role }) => {
   const { user, loading } = useAuth();
@@ -13,11 +18,12 @@ const ProtectedRoute = ({ children, role }) => {
 };
 
 function App() {
-  return (
+  return ( 
     <Routes>
+      {/* Login Route */}
       <Route path="/login" element={<Login />} />
 
-      {/* Manager Dashboard */}
+      {/* Admin/Manager Routes  */}
       <Route
         path="/admin/dashboard"
         element={
@@ -27,27 +33,57 @@ function App() {
         }
       />
 
-      {/* Other dashboards */}
+      <Route
+        path="/admin/members"
+        element={
+          <ProtectedRoute role="manager">
+            <Member/>
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/admin/trainers"
+        element={
+          <ProtectedRoute role="manager">
+            <Trainer/>
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/admin/schedules"
+        element={
+          <ProtectedRoute role="manager">
+            <Schedule/>
+          </ProtectedRoute>
+        }
+      />
+
+      {/* Trainer Routes  */}
       <Route
         path="/trainer/dashboard"
         element={
           <ProtectedRoute role="trainer">
-            {/* TrainerDashboard */}
+            <TrainerDashboard/>
           </ProtectedRoute>
         }
       />
 
+      {/* Trainer Routes  */}
       <Route
         path="/member/dashboard"
         element={
           <ProtectedRoute role="member">
-            {/* MemberDashboard */}
+            <MemberDashboard/>
           </ProtectedRoute>
         }
       />
 
+
+
       {/* Fallback */}
-      <Route path="*" element={<Navigate to="/login" replace />} />
+      {/* <Route path="*" element={<Navigate to="/login" replace />} /> */}
     </Routes>
   );
 }
